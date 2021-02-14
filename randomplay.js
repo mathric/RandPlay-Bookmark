@@ -2,13 +2,32 @@ let curTabId = null
 let curTabId2 = null
 let newTabId = null
 let tabFlg = true
+const WAITTIME = 2000
+
+function playMusic(bookmark) {
+  let randIndex = Math.floor(Math.random()*(bookmark.length))
+  let newTabId = null
+  chrome.tabs.create({ url: bookmark[randIndex]['url'], active: false }, function(newTab) {
+    newTabId = newTab.id
+    chrome.tabs.update(newTabId,{active:true})
+    //scroll down a little bit if it's nico site
+    if(String(newTab.pendingUrl).includes("https://www.nicovideo")) {
+      chrome.tabs.executeScript(newTab.id,{code:"window.scrollTo(0,500)"})
+    }
+    //need to triger video to play then go back to previous tab  
+    window.setTimeout(( () => {
+       chrome.tabs.update(tabFlg?curTabId:curTabId2,{active:true}) 
+      }), WAITTIME);
+    }
+  )
+}
 
 function searchFolder(bookmarks, target) {
   for(let i = 0; i < bookmarks.length; i++) {
     let bookmark = bookmarks[i]
     if(bookmark.children) {
       if(bookmark.title == target) {
-        console.log(bookmark)
+        playMusic(bookmark.children)
       }
       else {
         searchFolder(bookmark.children, target)
@@ -19,7 +38,7 @@ function searchFolder(bookmarks, target) {
 
 chrome.browserAction.onClicked.addListener(function (tab) {
   chrome.bookmarks.getTree(function(TreeNodes) {
-    searchFolder(TreeNodes, "music")
+    searchFolder(TreeNodes, "nico_test")
   })
 })
 

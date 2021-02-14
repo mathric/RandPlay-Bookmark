@@ -4,7 +4,8 @@
   "description": "randomly play your bookmark",
   "permissions": [
     "tabs",
-    "bookmarks"
+    "bookmarks",
+    "https://www.nicovideo.jp/*"
   ],
   "background": {
     "scripts": [
