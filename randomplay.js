@@ -3,6 +3,7 @@ let curTabId2 = null
 let newTabId = null
 let tabFlg = true
 let waitTime = 2000
+const DEFAULT_FOLDER = "music"
 
 function playMusic(bookmark) {
   let randIndex = Math.floor(Math.random()*(bookmark.length))
@@ -39,7 +40,7 @@ function searchFolder(bookmarks, target) {
 
 chrome.browserAction.onClicked.addListener(function (tab) {
   chrome.bookmarks.getTree(function(TreeNodes) {
-    searchFolder(TreeNodes, "nico_test")
+    searchFolder(TreeNodes, DEFAULT_FOLDER)
   })
 })
 
