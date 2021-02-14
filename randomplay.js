@@ -2,7 +2,7 @@ let curTabId = null
 let curTabId2 = null
 let newTabId = null
 let tabFlg = true
-const WAITTIME = 2000
+let waitTime = 2000
 
 function playMusic(bookmark) {
   let randIndex = Math.floor(Math.random()*(bookmark.length))
@@ -13,11 +13,12 @@ function playMusic(bookmark) {
     //scroll down a little bit if it's nico site
     if(String(newTab.pendingUrl).includes("https://www.nicovideo")) {
       chrome.tabs.executeScript(newTab.id,{code:"window.scrollTo(0,500)"})
+      waitTime = 3000
     }
     //need to triger video to play then go back to previous tab  
     window.setTimeout(( () => {
        chrome.tabs.update(tabFlg?curTabId:curTabId2,{active:true}) 
-      }), WAITTIME);
+      }), waitTime);
     }
   )
 }
