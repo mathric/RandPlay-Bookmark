@@ -1,0 +1,17 @@
+{
+  "name": "Random Bookmark",
+  "version": "1.0",
+  "description": "randomly play your bookmark",
+  "permissions": [
+    "storage",
+    "bookmarks"
+  ],
+  "background": {
+    "scripts": [
+      "randomplay.js"
+    ],
+    "persistent": false
+  },
+  "browser_action": {},
+  "manifest_version": 2
+}
