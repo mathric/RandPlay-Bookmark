@@ -1,27 +1,36 @@
 let curTabId = null
 let curTabId2 = null
-let newTabId = null
+let newTabId = 0
 let tabFlg = true
 let waitTime = 2000
 const DEFAULT_FOLDER = "music"
 
+function newTabCallback(newTab) {
+  newTabId = newTab.id
+  chrome.tabs.update(newTabId,{active:true})
+  //scroll down a little bit if it's nico site
+  if(String(newTab.pendingUrl).includes("https://www.nicovideo")) {
+    chrome.tabs.executeScript(newTab.id,{code:"window.scrollTo(0,500)"})
+    waitTime = 3000
+  }
+  //need to triger video to play then go back to previous tab  
+  window.setTimeout(( () => {
+     chrome.tabs.update(tabFlg?curTabId:curTabId2,{active:true}) 
+  }), waitTime);
+}
+
 function playMusic(bookmark) {
   let randIndex = Math.floor(Math.random()*(bookmark.length))
-  let newTabId = null
-  chrome.tabs.create({ url: bookmark[randIndex]['url'], active: false }, function(newTab) {
-    newTabId = newTab.id
-    chrome.tabs.update(newTabId,{active:true})
-    //scroll down a little bit if it's nico site
-    if(String(newTab.pendingUrl).includes("https://www.nicovideo")) {
-      chrome.tabs.executeScript(newTab.id,{code:"window.scrollTo(0,500)"})
-      waitTime = 3000
+
+  //check if the tab already exist, if exist update else create new tab
+  chrome.tabs.get(newTabId, ()=>{
+    if (chrome.runtime.lastError) {
+      chrome.tabs.create({ url: bookmark[randIndex]['url'], active: false }, newTabCallback)
+    } 
+    else {
+      chrome.tabs.update(newTabId, {url: bookmark[randIndex]['url']}, newTabCallback)
     }
-    //need to triger video to play then go back to previous tab  
-    window.setTimeout(( () => {
-       chrome.tabs.update(tabFlg?curTabId:curTabId2,{active:true}) 
-      }), waitTime);
-    }
-  )
+  })
 }
 
 function searchFolder(bookmarks, target) {
