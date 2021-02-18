@@ -2,7 +2,7 @@ let curTabId = null
 let curTabId2 = null
 let newTabId = 0
 let tabFlg = true
-let waitTime = 2000
+let waitTime = 1000
 const DEFAULT_FOLDER = "music"
 
 function newTabCallback(newTab) {
@@ -69,3 +69,9 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     }      
   });
 });
+//prevent prerendering to cause tabID changing
+chrome.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
+  if(removedTabId == newTabId) {
+    newTabId = addedTabId
+  }
+})
