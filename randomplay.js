@@ -15,7 +15,7 @@ function newTabCallback(newTab) {
   }
   //need to triger video to play then go back to previous tab  
   window.setTimeout(( () => {
-     chrome.tabs.update(tabFlg?curTabId:curTabId2,{active:true}) 
+    chrome.tabs.update(tabFlg?curTabId:curTabId2,{active:true}) 
   }), waitTime);
 }
 
@@ -28,6 +28,10 @@ function playMusic(bookmark) {
       chrome.tabs.create({ url: bookmark[randIndex]['url'], active: false }, newTabCallback)
     } 
     else {
+      //detect if current on the music play tab => if yes change the flag
+      if((newTabId == curTabId2 && tabFlg)||(newTabId == curTabId && !tabFlg)){
+        tabFlg = !tabFlg
+      }
       chrome.tabs.update(newTabId, {url: bookmark[randIndex]['url']}, newTabCallback)
     }
   })
