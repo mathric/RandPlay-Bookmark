@@ -3,6 +3,7 @@ let curTabId2 = null
 let newTabId = 0
 let tabFlg = true
 let waitTime = 1000
+let newTabExistFlag = false
 const DEFAULT_FOLDER = "music"
 
 function newTabCallback(newTab) {
@@ -23,18 +24,17 @@ function playMusic(bookmark) {
   let randIndex = Math.floor(Math.random()*(bookmark.length))
 
   //check if the tab already exist, if exist update else create new tab
-  chrome.tabs.get(newTabId, ()=>{
-    if (chrome.runtime.lastError) {
-      chrome.tabs.create({ url: bookmark[randIndex]['url'], active: false }, newTabCallback)
-    } 
-    else {
-      //detect if current on the music play tab => if yes change the flag
-      if((newTabId == curTabId2 && tabFlg)||(newTabId == curTabId && !tabFlg)){
-        tabFlg = !tabFlg
-      }
-      chrome.tabs.update(newTabId, {url: bookmark[randIndex]['url']}, newTabCallback)
+  if(!newTabExistFlag) {
+    chrome.tabs.create({ url: bookmark[randIndex]['url'], active: false }, newTabCallback)
+    newTabExistFlag = true
+  }
+  else {
+    //detect if current on the music play tab => if yes change the flag
+    if((newTabId == curTabId2 && tabFlg)||(newTabId == curTabId && !tabFlg)){
+      tabFlg = !tabFlg
     }
-  })
+    chrome.tabs.update(newTabId, {url: bookmark[randIndex]['url']}, newTabCallback)
+  }
 }
 
 function searchFolder(bookmarks, target) {
@@ -75,3 +75,9 @@ chrome.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
     newTabId = addedTabId
   }
 })
+
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  if(tabId == newTabId) {
+    newTabExistFlag = false
+  }
+ })
