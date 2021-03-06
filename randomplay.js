@@ -5,7 +5,7 @@ const DEFAULT_YT_WAIT_TIME = 800
 const DEFAULT_NICO_WAIT_TIME = 1000
 
 //the wait time for script to check if video is playable
-const VIDEO_AVAIL_WAIT_TIME = 1500
+const VIDEO_AVAIL_WAIT_TIME = 1800
 
 let targetBookmark = null
 let curTabId = null
@@ -32,6 +32,7 @@ function playMusic(bookmark) {
 
   //check if the tab already exist, if exist update else create new tab
   if (!newTabExistFlag) {
+    console.log("tab created")
     chrome.tabs.create({ url: genRandBookmarkURL(targetBookmark), active: false }, newTabCallback)
     newTabExistFlag = true
   }
@@ -40,6 +41,7 @@ function playMusic(bookmark) {
     if ((newTabId == curTabId2 && tabFlg) || (newTabId == curTabId && !tabFlg)) {
       tabFlg = !tabFlg
     }
+    console.log("tab updated!" + String(newTabId))
     chrome.tabs.update(newTabId, { url: genRandBookmarkURL(targetBookmark) }, newTabCallback)
   }
 }
@@ -71,9 +73,6 @@ function updateUntilVideoAvail(tabId) {
       if (!result[0]) {
         if(!clickFlg){
           chrome.tabs.update(tabId, { url: genRandBookmarkURL(targetBookmark) })
-        }
-        else {
-
         }
       }
       else {
