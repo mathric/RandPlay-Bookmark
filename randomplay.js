@@ -1,6 +1,7 @@
-const DEFAULT_FOLDER = "music"
+const DEFAULT_FOLDER = "test"
 const DEFAULT_YT_WAIT_TIME = 1000
 const DEFAULT_NICO_WAIT_TIME = 3000
+const VIDEO_AVAIL_WAIT_TIME = 1500
 
 let targetBookmark = null
 let curTabId = null
@@ -10,7 +11,7 @@ let tabFlg = true
 let waitTime = DEFAULT_YT_WAIT_TIME
 let newTabExistFlag = false
 
-import { ytGetVideo } from './youtube_controller.js'
+import { ytGetVideo, initVideoTime } from './youtube_controller.js'
 
 function newTabCallback(newTab) {
   newTabId = newTab.id
@@ -67,11 +68,13 @@ function searchFolder(bookmarks, target) {
 }
 
 function updateUntilVideoAvail(tabId) {
-  chrome.tabs.executeScript(tabId, { code: `(${getVideo})()` }, function (result) {
-    if (!result[0]) {
-      chrome.tabs.update(tabId, { url: genRandBookmarkURL(targetBookmark) })
-    }
-  })
+  window.setTimeout( () => {
+    chrome.tabs.executeScript(tabId, { code: `(${ytGetVideo})()` }, function (result) {
+      if (!result[0]) {
+        chrome.tabs.update(tabId, { url: genRandBookmarkURL(targetBookmark) })
+      }
+    })
+  }, VIDEO_AVAIL_WAIT_TIME)
 }
 
 chrome.browserAction.onClicked.addListener(function (tab) {
@@ -105,8 +108,9 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
   }
 })
 
-chrome.tabs.onUpdated.addListener(function (tabId, info) {
-  if (info.status === 'complete' && tabId == newTabId) {
-    updateUntilVideoAvail(tabId)
+//onupdate listener might fired multiple times due to iframe
+chrome.webNavigation.onCompleted.addListener(function(details) {
+  if(details.tabId == newTabId && details.frameId == 0) {
+    updateUntilVideoAvail(newTabId)
   }
-});
+})
