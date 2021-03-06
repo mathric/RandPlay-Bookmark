@@ -8,11 +8,13 @@
     "https://www.nicovideo.jp/*"
   ],
   "background": {
-    "scripts": [
-      "randomplay.js"
-    ],
+    "page":"background.html",
     "persistent": false
   },
+  "web_accessible_resources": [
+    "randomplay.js",
+    "youtube_controller.js"
+ ],
   "browser_action": {},
   "manifest_version": 2
 }
