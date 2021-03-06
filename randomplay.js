@@ -1,11 +1,15 @@
+const DEFAULT_FOLDER = "music"
+const DEFAULT_YT_WAIT_TIME = 1000
+const DEFAULT_NICO_WAIT_TIME = 3000
+
 let targetBookmark = null
 let curTabId = null
 let curTabId2 = null
 let newTabId = 0
 let tabFlg = true
-let waitTime = 1000
+let waitTime = DEFAULT_YT_WAIT_TIME
 let newTabExistFlag = false
-const DEFAULT_FOLDER = "music"
+
 import { ytGetVideo } from './youtube_controller.js'
 
 function newTabCallback(newTab) {
@@ -15,10 +19,10 @@ function newTabCallback(newTab) {
   //scroll down a little bit if it's nico site
   if (String(newTab.pendingUrl).includes("https://www.nicovideo")) {
     chrome.tabs.executeScript(newTab.id, { code: "window.scrollTo(0,500)" })
-    waitTime = 3000
+    waitTime = DEFAULT_NICO_WAIT_TIME
   }
   else {
-    waitTime = 1000
+    waitTime = DEFAULT_YT_WAIT_TIME
   }
   //need to triger video to play then go back to previous tab  
   window.setTimeout((() => {
