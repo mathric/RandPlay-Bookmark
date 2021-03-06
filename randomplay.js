@@ -5,8 +5,8 @@ let newTabId = 0
 let tabFlg = true
 let waitTime = 1000
 let newTabExistFlag = false
-const DEFAULT_FOLDER = "test"
-import { getVideo } from './youtube_controller.js'
+const DEFAULT_FOLDER = "music"
+import { ytGetVideo } from './youtube_controller.js'
 
 function newTabCallback(newTab) {
   newTabId = newTab.id

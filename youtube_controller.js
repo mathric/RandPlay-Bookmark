@@ -1,6 +1,6 @@
 let video = null
 
-function getVideo() {
+function ytGetVideo() {
     //get HTMLMediaElement to manipulate
     video = document.querySelector("video");
 
@@ -12,4 +12,4 @@ function getVideo() {
     return true
 }
 
-export {getVideo}
+export {ytGetVideo}
