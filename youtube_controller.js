@@ -1,3 +1,5 @@
+const INIT_PLAY_TIME_THRESHOLD = 5
+
 function ytGetVideo() {
     //get HTMLMediaElement to manipulate
     video = document.querySelector("video");
@@ -16,7 +18,9 @@ function ytInitVideoTime(video) {
     video = document.querySelector("video")
     //if no time parameter indicates initial time then set video time to 0s
     if(!urlParams.has("t")) {
-        video.currentTime = 0
+        if(video.currentTime > INIT_PLAY_TIME_THRESHOLD) {
+            video.currentTime = 0
+        }
     }
     return 
 }
