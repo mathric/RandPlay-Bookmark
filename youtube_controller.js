@@ -12,7 +12,7 @@ function ytGetVideo() {
     }   
 }
 
-function ytInitVideoTime(video) {
+function ytInitVideoTime() {
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString);
     video = document.querySelector("video")
