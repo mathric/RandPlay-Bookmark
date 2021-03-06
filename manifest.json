@@ -5,7 +5,8 @@
   "permissions": [
     "tabs",
     "bookmarks",
-    "https://www.nicovideo.jp/*"
+    "https://www.nicovideo.jp/*",
+    "https://www.youtube.com/*"
   ],
   "background": {
     "page":"background.html",
