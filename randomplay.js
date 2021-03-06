@@ -21,14 +21,6 @@ function newTabCallback(newTab) {
   newTabId = newTab.id
   chrome.tabs.update(newTabId, { active: true })
 
-  //scroll down a little bit if it's nico site
-  if (String(newTab.pendingUrl).includes("https://www.nicovideo")) {
-    chrome.tabs.executeScript(newTab.id, { code: "window.scrollTo(0,500)" })
-    waitTime = DEFAULT_NICO_WAIT_TIME
-  }
-  else {
-    waitTime = DEFAULT_YT_WAIT_TIME
-  }
   //need to triger video to play then go back to previous tab  
   window.setTimeout((() => {
     chrome.tabs.update(tabFlg ? curTabId : curTabId2, { active: true })
@@ -119,6 +111,14 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
 //onupdate listener might fired multiple times due to iframe => use oncompleted listener
 chrome.webNavigation.onCompleted.addListener(function(details) {
   if(details.tabId == newTabId && details.frameId == 0) {
-    updateUntilVideoAvail(newTabId)
+    if(details.url.includes("youtube.com")) {
+      updateUntilVideoAvail(newTabId)
+      waitTime = DEFAULT_YT_WAIT_TIME
+    }
+    //scroll down a little bit if it's nico site
+    else if (String(details.url).includes("https://www.nicovideo")) {
+      chrome.tabs.executeScript(newTabId, { code: "window.scrollTo(0,500)" })
+      waitTime = DEFAULT_NICO_WAIT_TIME
+    }
   }
 })
