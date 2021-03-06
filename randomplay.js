@@ -1,7 +1,7 @@
-const DEFAULT_FOLDER = "test"
+const DEFAULT_FOLDER = "music"
 
 //the wait time for video to start playing
-const DEFAULT_YT_WAIT_TIME = 1000
+const DEFAULT_YT_WAIT_TIME = 800
 const DEFAULT_NICO_WAIT_TIME = 1000
 
 //the wait time for script to check if video is playable
