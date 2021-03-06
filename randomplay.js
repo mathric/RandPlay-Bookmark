@@ -2,7 +2,7 @@ const DEFAULT_FOLDER = "test"
 
 //the wait time for video to start playing
 const DEFAULT_YT_WAIT_TIME = 1000
-const DEFAULT_NICO_WAIT_TIME = 3000
+const DEFAULT_NICO_WAIT_TIME = 1000
 
 //the wait time for script to check if video is playable
 const VIDEO_AVAIL_WAIT_TIME = 1500
@@ -12,8 +12,9 @@ let curTabId = null
 let curTabId2 = null
 let newTabId = 0
 let tabFlg = true
-let waitTime = DEFAULT_YT_WAIT_TIME
+let waitTime = DEFAULT_YT_WAIT_TIME + VIDEO_AVAIL_WAIT_TIME
 let newTabExistFlag = false
+let clickFlg = false
 
 import { ytGetVideo, ytInitVideoTime } from './youtube_controller.js'
 
@@ -63,11 +64,17 @@ function searchFolder(bookmarks, target) {
   }
 }
 
+//current only work for yt video
 function updateUntilVideoAvail(tabId) {
   window.setTimeout( () => {
     chrome.tabs.executeScript(tabId, { code: `(${ytGetVideo})()` }, function (result) {
       if (!result[0]) {
-        chrome.tabs.update(tabId, { url: genRandBookmarkURL(targetBookmark) })
+        if(!clickFlg){
+          chrome.tabs.update(tabId, { url: genRandBookmarkURL(targetBookmark) })
+        }
+        else {
+
+        }
       }
       else {
         //initialize the video time
@@ -78,6 +85,7 @@ function updateUntilVideoAvail(tabId) {
 }
 
 chrome.browserAction.onClicked.addListener(function (tab) {
+  clickFlg = true
   chrome.bookmarks.getTree(function (TreeNodes) {
     searchFolder(TreeNodes, DEFAULT_FOLDER)
   })
@@ -111,14 +119,15 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
 //onupdate listener might fired multiple times due to iframe => use oncompleted listener
 chrome.webNavigation.onCompleted.addListener(function(details) {
   if(details.tabId == newTabId && details.frameId == 0) {
+    clickFlg = false
     if(details.url.includes("youtube.com")) {
       updateUntilVideoAvail(newTabId)
-      waitTime = DEFAULT_YT_WAIT_TIME
+      waitTime = DEFAULT_YT_WAIT_TIME + VIDEO_AVAIL_WAIT_TIME
     }
-    //scroll down a little bit if it's nico site
-    else if (String(details.url).includes("https://www.nicovideo")) {
+    //scroll down a little bit if it's nico site to triger video play
+    else if (details.url.includes("https://www.nicovideo")) {
       chrome.tabs.executeScript(newTabId, { code: "window.scrollTo(0,500)" })
-      waitTime = DEFAULT_NICO_WAIT_TIME
+      waitTime = DEFAULT_NICO_WAIT_TIME + VIDEO_AVAIL_WAIT_TIME
     }
   }
 })
