@@ -5,10 +5,13 @@ let tabFlg = true
 let waitTime = 1000
 let newTabExistFlag = false
 const DEFAULT_FOLDER = "music"
+import {getVideo} from './youtube_controller.js'
 
 function newTabCallback(newTab) {
   newTabId = newTab.id
   chrome.tabs.update(newTabId,{active:true})
+  chrome.tabs.executeScript(newTabId, { code: `(${ getVideo })()` })
+
   //scroll down a little bit if it's nico site
   if(String(newTab.pendingUrl).includes("https://www.nicovideo")) {
     chrome.tabs.executeScript(newTab.id,{code:"window.scrollTo(0,500)"})
