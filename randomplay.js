@@ -1,6 +1,10 @@
 const DEFAULT_FOLDER = "test"
+
+//the wait time for video to start playing
 const DEFAULT_YT_WAIT_TIME = 1000
 const DEFAULT_NICO_WAIT_TIME = 3000
+
+//the wait time for script to check if video is playable
 const VIDEO_AVAIL_WAIT_TIME = 1500
 
 let targetBookmark = null
@@ -11,7 +15,7 @@ let tabFlg = true
 let waitTime = DEFAULT_YT_WAIT_TIME
 let newTabExistFlag = false
 
-import { ytGetVideo, initVideoTime } from './youtube_controller.js'
+import { ytGetVideo, ytInitVideoTime } from './youtube_controller.js'
 
 function newTabCallback(newTab) {
   newTabId = newTab.id
@@ -73,6 +77,10 @@ function updateUntilVideoAvail(tabId) {
       if (!result[0]) {
         chrome.tabs.update(tabId, { url: genRandBookmarkURL(targetBookmark) })
       }
+      else {
+        //initialize the video time
+        chrome.tabs.executeScript(tabId, { code: `(${ytInitVideoTime})()` }) 
+      }
     })
   }, VIDEO_AVAIL_WAIT_TIME)
 }
@@ -108,7 +116,7 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
   }
 })
 
-//onupdate listener might fired multiple times due to iframe
+//onupdate listener might fired multiple times due to iframe => use oncompleted listener
 chrome.webNavigation.onCompleted.addListener(function(details) {
   if(details.tabId == newTabId && details.frameId == 0) {
     updateUntilVideoAvail(newTabId)

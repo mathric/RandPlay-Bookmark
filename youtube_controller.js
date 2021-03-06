@@ -1,15 +1,24 @@
-let video = null
-
 function ytGetVideo() {
     //get HTMLMediaElement to manipulate
     video = document.querySelector("video");
-
     //no resource
-    if(video.readyState < 1) {     
+    if(video.readyState == 0) {     
         return false
     }
-    
-    return true
+    else {
+        return true
+    }   
 }
 
-export {ytGetVideo}
+function ytInitVideoTime(video) {
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString);
+    video = document.querySelector("video")
+    //if no time parameter indicates initial time then set video time to 0s
+    if(!urlParams.has("t")) {
+        video.currentTime = 0
+    }
+    return 
+}
+
+export {ytGetVideo, ytInitVideoTime}
