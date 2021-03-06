@@ -1,3 +1,4 @@
+let targetBookmark = null
 let curTabId = null
 let curTabId2 = null
 let newTabId = 0
@@ -10,7 +11,6 @@ import {getVideo} from './youtube_controller.js'
 function newTabCallback(newTab) {
   newTabId = newTab.id
   chrome.tabs.update(newTabId,{active:true})
-  chrome.tabs.executeScript(newTabId, { code: `(${ getVideo })()` })
 
   //scroll down a little bit if it's nico site
   if(String(newTab.pendingUrl).includes("https://www.nicovideo")) {
@@ -27,11 +27,10 @@ function newTabCallback(newTab) {
 }
 
 function playMusic(bookmark) {
-  let randIndex = Math.floor(Math.random()*(bookmark.length))
 
   //check if the tab already exist, if exist update else create new tab
   if(!newTabExistFlag) {
-    chrome.tabs.create({ url: bookmark[randIndex]['url'], active: false }, newTabCallback)
+    chrome.tabs.create({ url: genRandBookmarkURL(targetBookmark), active: false }, newTabCallback)
     newTabExistFlag = true
   }
   else {
@@ -39,8 +38,13 @@ function playMusic(bookmark) {
     if((newTabId == curTabId2 && tabFlg)||(newTabId == curTabId && !tabFlg)){
       tabFlg = !tabFlg
     }
-    chrome.tabs.update(newTabId, {url: bookmark[randIndex]['url']}, newTabCallback)
+    chrome.tabs.update(newTabId, {url: genRandBookmarkURL(targetBookmark)}, newTabCallback)
   }
+}
+
+function genRandBookmarkURL(bookmark) {
+  let randIndex = Math.floor(Math.random()*(bookmark.length)) 
+  return bookmark[randIndex]['url']
 }
 
 function searchFolder(bookmarks, target) {
@@ -48,6 +52,7 @@ function searchFolder(bookmarks, target) {
     let bookmark = bookmarks[i]
     if(bookmark.children) {
       if(bookmark.title == target) {
+        targetBookmark = bookmark.children
         playMusic(bookmark.children)
       }
       else {
