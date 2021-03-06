@@ -14,6 +14,9 @@ function newTabCallback(newTab) {
     chrome.tabs.executeScript(newTab.id,{code:"window.scrollTo(0,500)"})
     waitTime = 3000
   }
+  else {
+    waitTime = 1000
+  }
   //need to triger video to play then go back to previous tab  
   window.setTimeout(( () => {
     chrome.tabs.update(tabFlg?curTabId:curTabId2,{active:true}) 
