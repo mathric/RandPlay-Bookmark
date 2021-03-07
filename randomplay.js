@@ -32,7 +32,6 @@ function newTabCallback(newTab) {
     window.setTimeout((() => {
       chrome.tabs.update(tabFlg ? curTabId : curTabId2, { active: true })
     }), waitTime);
-    initFlg = false
   } 
 }
 
