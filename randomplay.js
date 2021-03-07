@@ -81,6 +81,7 @@ function searchFolder(bookmarks, target) {
       }
     }
   }
+  return targetBookmark
 }
 
 //current only work for yt video
@@ -104,11 +105,13 @@ chrome.browserAction.onClicked.addListener(function (tab) {
   clickFlg = true
   if(!initFlg) {
     chrome.bookmarks.getTree(function (TreeNodes) {
-      searchFolder(TreeNodes, DEFAULT_FOLDER)
+      playMusic(searchFolder(TreeNodes, DEFAULT_FOLDER))
     })
     initFlg = false
   }
-  playMusic(targetBookmark)
+  else {
+    playMusic(targetBookmark)
+  } 
 })
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
@@ -155,7 +158,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
   if(message.from == "youtube_controller") {
     if(message.message == "yt_video_end" && YT_CONTINUOUS_MODE) {
-      
+      playMusic(targetBookmark)
     }
   }
 })
