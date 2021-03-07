@@ -7,6 +7,12 @@ const DEFAULT_NICO_WAIT_TIME = 1000
 //the wait time for script to check if video is playable
 const VIDEO_AVAIL_WAIT_TIME = 2000
 
+//threshold time to determined if need to start video from beginning
+const INIT_PLAY_TIME_THRESHOLD = 5
+
+//if all videos are yt video can use this mode and will keep auto playing next video
+const YT_CONTINUOUS_MODE = true
+
 let targetBookmark = null
 let curTabId = null
 let curTabId2 = null
@@ -88,7 +94,7 @@ function updateUntilVideoAvail(tabId) {
       }
       else {
         //initialize the video time
-        chrome.tabs.executeScript(tabId, { code: `(${ytInitVideoTime})()` }) 
+        chrome.tabs.executeScript(tabId, { code: `(${ytInitVideoTime})(${INIT_PLAY_TIME_THRESHOLD})` }) 
       }
     })
   }, VIDEO_AVAIL_WAIT_TIME)
@@ -138,6 +144,14 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
     else if (details.url.includes("https://www.nicovideo")) {
       chrome.tabs.executeScript(newTabId, { code: "window.scrollTo(0,500)" })
       waitTime = DEFAULT_NICO_WAIT_TIME + VIDEO_AVAIL_WAIT_TIME
+    }
+  }
+})
+
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
+  if(message.from == "youtube_controller") {
+    if(message.message == "yt_video_end" && YT_CONTINUOUS_MODE) {
+      
     }
   }
 })
