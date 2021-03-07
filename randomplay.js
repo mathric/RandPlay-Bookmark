@@ -13,6 +13,7 @@ const INIT_PLAY_TIME_THRESHOLD = 5
 //if all videos are yt video can use this mode and will keep auto playing next video
 const YT_CONTINUOUS_MODE = true
 
+let initFlg = false
 let targetBookmark = null
 let curTabId = null
 let curTabId2 = null
@@ -74,7 +75,6 @@ function searchFolder(bookmarks, target) {
     if (bookmark.children) {
       if (bookmark.title == target) {
         targetBookmark = bookmark.children
-        playMusic(bookmark.children)
       }
       else {
         searchFolder(bookmark.children, target)
@@ -102,9 +102,13 @@ function updateUntilVideoAvail(tabId) {
 
 chrome.browserAction.onClicked.addListener(function (tab) {
   clickFlg = true
-  chrome.bookmarks.getTree(function (TreeNodes) {
-    searchFolder(TreeNodes, DEFAULT_FOLDER)
-  })
+  if(!initFlg) {
+    chrome.bookmarks.getTree(function (TreeNodes) {
+      searchFolder(TreeNodes, DEFAULT_FOLDER)
+    })
+    initFlg = false
+  }
+  playMusic(targetBookmark)
 })
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
