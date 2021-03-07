@@ -1,11 +1,11 @@
 const DEFAULT_FOLDER = "music"
 
 //the wait time for video to start playing
-const DEFAULT_YT_WAIT_TIME = 800
+const DEFAULT_YT_WAIT_TIME = 1000
 const DEFAULT_NICO_WAIT_TIME = 1000
 
 //the wait time for script to check if video is playable
-const VIDEO_AVAIL_WAIT_TIME = 1800
+const VIDEO_AVAIL_WAIT_TIME = 2000
 
 let targetBookmark = null
 let curTabId = null
@@ -15,17 +15,25 @@ let tabFlg = true
 let waitTime = DEFAULT_YT_WAIT_TIME + VIDEO_AVAIL_WAIT_TIME
 let newTabExistFlag = false
 let clickFlg = false
+let ytContinuousFlg = false
+let prevURL = ""
 
 import { ytGetVideo, ytInitVideoTime } from './youtube_controller.js'
 
 function newTabCallback(newTab) {
   newTabId = newTab.id
-  chrome.tabs.update(newTabId, { active: true })
 
-  //need to triger video to play then go back to previous tab  
-  window.setTimeout((() => {
-    chrome.tabs.update(tabFlg ? curTabId : curTabId2, { active: true })
-  }), waitTime);
+  //if not having continuous yt video then need to triger video play on different site by going to the tab
+  //the flg is true only when prev and current video are yt video 
+  if(!ytContinuousFlg) {
+    chrome.tabs.update(newTabId, { active: true })
+    console.log("id " + String(newTabId))
+    //need to triger video to play then go back to previous tab  
+    window.setTimeout((() => {
+      chrome.tabs.update(tabFlg ? curTabId : curTabId2, { active: true })
+    }), waitTime);
+    initFlg = false
+  } 
 }
 
 function playMusic(bookmark) {
@@ -48,6 +56,10 @@ function playMusic(bookmark) {
 
 function genRandBookmarkURL(bookmark) {
   let randIndex = Math.floor(Math.random() * (bookmark.length))
+  //check if current url and prev are both yt video
+  ytContinuousFlg = prevURL.includes("youtube.com") && bookmark[randIndex]['url'].includes("youtube.com")
+  prevURL = bookmark[randIndex]['url']
+
   return bookmark[randIndex]['url']
 }
 
