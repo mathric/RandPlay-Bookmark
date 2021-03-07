@@ -47,7 +47,11 @@ function playMusic(bookmark) {
   //check if the tab already exist, if exist update else create new tab
   if (!newTabExistFlag) {
     console.log("tab created")
-    chrome.tabs.create({ url: genRandBookmarkURL(targetBookmark), active: false }, newTabCallback)
+    //create new tab must at least switch one time to that tab
+    let tempCreatURL = genRandBookmarkURL(targetBookmark) 
+    ytContinuousFlg = false
+
+    chrome.tabs.create({ url: tempCreatURL, active: false }, newTabCallback)
     newTabExistFlag = true
   }
   else {
@@ -158,6 +162,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
   if(message.from == "youtube_controller") {
     if(message.message == "yt_video_end" && YT_CONTINUOUS_MODE) {
+      clickFlg = true
       playMusic(targetBookmark)
     }
   }
