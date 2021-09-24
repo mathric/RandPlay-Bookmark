@@ -16,8 +16,13 @@ function createDynamicList(node, htmlParent) {
                 let grandChild = document.createElement("ul");
                 child.appendChild(grandChild)
                 child.addEventListener("click", function (e) {
-                    foldClickHandler(node.children[i], grandChild)
                     e.stopPropagation();
+                    foldClickHandler(node.children[i], grandChild)                 
+                });
+            }
+            else {
+                child.addEventListener("click", function (e) {
+                    e.stopPropagation();             
                 });
             }
             
