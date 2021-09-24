@@ -7,6 +7,8 @@
     "tabs",
     "bookmarks",
     "webNavigation",
+    "chrome://favicon/",
+    "edge://favicon/",
     "https://www.nicovideo.jp/*",
     "https://www.youtube.com/*"
   ],

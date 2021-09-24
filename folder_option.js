@@ -19,6 +19,14 @@ save_button.addEventListener("click", function(event) {
 })
 
 
+function getIconSrc(url) {
+    let tmp = document.createElement ('a')
+    tmp.href = url
+    console.log("tmp.hostname",tmp.hostname)
+    return tmp.hostname
+}
+
+
 function createDynamicList(node, htmlParent) {
     //check if it is directory
     if (node.hasOwnProperty("children")) {
@@ -43,8 +51,7 @@ function createDynamicList(node, htmlParent) {
                 child.appendChild(titleContent);
 
                 //add button to expand the directory
-                let unfoldBtn = document.createElement('input');
-                unfoldBtn.setAttribute('type', 'button');
+                let unfoldBtn = document.createElement('button');
                 child.appendChild(unfoldBtn)
 
                 let grandChild = document.createElement("ul");
@@ -59,8 +66,16 @@ function createDynamicList(node, htmlParent) {
             else {
                 child.addEventListener("click", function (e) {
                     e.stopPropagation();             
-                });
-                child.innerHTML += node.children[i].title;
+                })
+                //add icon
+                let childIcon = document.createElement('img')
+                console.log(node.children[i].url)
+                childIcon.src = "chrome://favicon/https://" + getIconSrc(node.children[i].url)
+                console.log(childIcon.src)
+                child.appendChild(childIcon)
+
+                let titleContent = document.createTextNode(node.children[i].title)
+                child.appendChild(titleContent)
             }
             
             htmlParent.appendChild(child);  
