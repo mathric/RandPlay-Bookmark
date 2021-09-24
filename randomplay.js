@@ -34,7 +34,7 @@ function newTabCallback(newTab) {
   //the flg is true only when prev and current video are yt video 
   if(!ytContinuousFlg) {
     chrome.tabs.update(newTabId, { active: true })
-    console.log("id " + String(newTabId))
+    //console.log("id " + String(newTabId))
     //need to triger video to play then go back to previous tab  
     window.setTimeout((() => {
       chrome.tabs.update(tabFlg ? curTabId : curTabId2, { active: true })
@@ -46,7 +46,7 @@ function playMusic(bookmark) {
 
   //check if the tab already exist, if exist update else create new tab
   if (!newTabExistFlag) {
-    console.log("tab created")
+    //console.log("tab created")
     //create new tab must at least switch one time to that tab
     let tempCreatURL = genRandBookmarkURL(targetBookmark) 
     ytContinuousFlg = false
@@ -59,18 +59,39 @@ function playMusic(bookmark) {
     if ((newTabId == curTabId2 && tabFlg) || (newTabId == curTabId && !tabFlg)) {
       tabFlg = !tabFlg
     }
-    console.log("tab updated!" + String(newTabId))
+    //console.log("tab updated!" + String(newTabId))
     chrome.tabs.update(newTabId, { url: genRandBookmarkURL(targetBookmark) }, newTabCallback)
   }
 }
 
 function genRandBookmarkURL(bookmark) {
-  let randIndex = Math.floor(Math.random() * (bookmark.length))
-  //check if current url and prev are both yt video
-  ytContinuousFlg = prevURL.includes("youtube.com") && bookmark[randIndex]['url'].includes("youtube.com")
-  prevURL = bookmark[randIndex]['url']
+  let targetBookmark = []
+  chrome.storage.local.get('targetBookmark', function(data){
+    if(data) {
+      targetBookmark = [...data.targetBookmark]
+    }
+    else {
+      targetBookmark = [DEFAULT_FOLDER]
+    }
+  })
+  let randDirIndex = Math.floor(Math.random() * (targetBookmark.length))
+  let randNode = chrome.bookmarks.get(targetBookmark[randDirIndex])
+  let randIndex = Math.floor(Math.random() * (randNode.length))
+  let maxSearch = 20
+  while(!randNode[randIndex].hasOwnProperty('url') && maxSearch > 0) {
+    randIndex = Math.floor(Math.random() * (randNode.length))
+    maxSearch -= 1
+  }
+  ytContinuousFlg = prevURL.includes("youtube.com") && randNode[randIndex]['url'].includes("youtube.com")
+  prevURL = randNode[randIndex]['url']
 
-  return bookmark[randIndex]['url']
+  return randNode[randIndex]['url']
+  // let randIndex = Math.floor(Math.random() * (bookmark.length))
+  // //check if current url and prev are both yt video
+  // ytContinuousFlg = prevURL.includes("youtube.com") && bookmark[randIndex]['url'].includes("youtube.com")
+  // prevURL = bookmark[randIndex]['url']
+
+  // return bookmark[randIndex]['url']
 }
 
 function searchFolder(bookmarks, target) {
