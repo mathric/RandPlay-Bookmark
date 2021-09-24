@@ -15,7 +15,8 @@
   },
   "web_accessible_resources": [
     "randomplay.js",
-    "youtube_controller.js"
+    "youtube_controller.js",
+    "folder_option.js"
  ],
   "browser_action": {},
   "manifest_version": 2,
