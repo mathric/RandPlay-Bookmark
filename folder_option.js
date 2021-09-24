@@ -10,8 +10,10 @@ chrome.bookmarks.getTree(function (TreeNodes) {
     console.log(TreeNodes[0])
 });
 
+//save the config
 save_button.addEventListener("click", function(event) {
-    chrome.storage.local.set(configSetting);
+    //set can't properly save => need to convert to array
+    localStorage.setItem("targetBookmark", JSON.stringify(Array.from(configSetting.targetBookmark)))
 })
 
 
@@ -86,9 +88,3 @@ function checkEventHandler(node, check=true) {
     }
     console.log(configSetting.targetBookmark)
 }
-
-function getConfig() {
-    return configSetting
-}
-
-export {getConfig}

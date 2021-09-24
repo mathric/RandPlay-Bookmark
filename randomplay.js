@@ -64,6 +64,18 @@ function playMusic() {
   }
 }
 
+const readLocalStorage = async(key) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get([key], function(result) {
+      if (result[key] === undefined) {
+        reject([]);
+      } else {
+        resolve(result[key]);
+      }
+    })
+  })
+}
+
 function genRandBookmarkURL(/*bookmark*/) {
   let targetBookmark = []
   //index for directory treenode
@@ -73,31 +85,37 @@ function genRandBookmarkURL(/*bookmark*/) {
   //random child index in random directory node
   let randIndex = null
 
-  chrome.storage.local.get('targetBookmark', function(data){
-    if(data) {
-      targetBookmark = [...data.targetBookmark]
-    }
-  })
-  if(targetBookmark.length == 0) {
+  targetBookmark = JSON.parse(localStorage.getItem("targetBookmark"))
+  // chrome.storage.local.get('targetBookmark', function(data){
+  //   if(data) {
+  //     targetBookmark = [...data.targetBookmark]
+  //     console.log("data")
+  //     console.log(targetBookmark)
+  //   }
+  //   console.log(data)
+  // })
+  console.log(targetBookmark)
+  if(targetBookmark == null || targetBookmark.length == 0) {
     randNode = defaultTargetBookmark
-    console.log("randNode", randNode)
-    console.log("mumi", defaultTargetBookmark)
+    //console.log("randNode", randNode)
   }
   else {
     randDirIndex = Math.floor(Math.random() * (targetBookmark.length))
-    randNode = chrome.bookmarks.get(targetBookmark[randDirIndex])
+    console.log(targetBookmark[randDirIndex])
+    randNode = targetBookmark[randDirIndex]
+    console.log("randNode", randNode)
   }
-  randIndex = Math.floor(Math.random() * (randNode.length))
+  randIndex = Math.floor(Math.random() * (randNode['children'].length))
   let maxSearch = 20
-  while(!randNode[randIndex].hasOwnProperty('url') && maxSearch > 0) {
+  while(!randNode['children'][randIndex].hasOwnProperty('url') && maxSearch > 0) {
     randIndex = Math.floor(Math.random() * (randNode.length))
     maxSearch -= 1
   }
   
-  ytContinuousFlg = prevURL.includes("youtube.com") && randNode[randIndex]['url'].includes("youtube.com")
-  prevURL = randNode[randIndex]['url']
+  ytContinuousFlg = prevURL.includes("youtube.com") && randNode['children'][randIndex]['url'].includes("youtube.com")
+  prevURL = randNode['children'][randIndex]['url']
 
-  return randNode[randIndex]['url']
+  return randNode['children'][randIndex]['url']
   // let randIndex = Math.floor(Math.random() * (bookmark.length))
   // //check if current url and prev are both yt video
   // ytContinuousFlg = prevURL.includes("youtube.com") && bookmark[randIndex]['url'].includes("youtube.com")
@@ -106,19 +124,20 @@ function genRandBookmarkURL(/*bookmark*/) {
   // return bookmark[randIndex]['url']
 }
 
+//return tree node of the target
 function searchFolder(bookmarks, target) {
   for (let i = 0; i < bookmarks.length; i++) {
     let bookmark = bookmarks[i]
     if (bookmark.children) {
       if (bookmark.title == target) {
-        console.log("found search target")
+        //console.log("found search target")
         let searchTargetBookmark = bookmark.children
         return searchTargetBookmark
       }
       else {
         let result = searchFolder(bookmark.children, target)
         if(result) {
-          console.log("result", result)
+          //console.log("result", result)
           return result
         }
       }
@@ -149,7 +168,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
   if(!initFlg) {
     chrome.bookmarks.getTree(function (TreeNodes) {
       defaultTargetBookmark = searchFolder(TreeNodes, DEFAULT_FOLDER)
-      console.log("defaultTargetBookmark",defaultTargetBookmark)
+      //console.log("defaultTargetBookmark",defaultTargetBookmark)
       playMusic()
     })
     initFlg = false
