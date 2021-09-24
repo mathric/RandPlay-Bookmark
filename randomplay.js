@@ -14,7 +14,7 @@ const INIT_PLAY_TIME_THRESHOLD = 5
 const YT_CONTINUOUS_MODE = true
 
 let initFlg = false
-let targetBookmark = null
+let defaultTargetBookmark = null
 let curTabId = null
 let curTabId2 = null
 let newTabId = 0
@@ -42,13 +42,13 @@ function newTabCallback(newTab) {
   } 
 }
 
-function playMusic(bookmark) {
+function playMusic() {
 
   //check if the tab already exist, if exist update else create new tab
   if (!newTabExistFlag) {
     //console.log("tab created")
     //create new tab must at least switch one time to that tab
-    let tempCreatURL = genRandBookmarkURL(targetBookmark) 
+    let tempCreatURL = genRandBookmarkURL() 
     ytContinuousFlg = false
 
     chrome.tabs.create({ url: tempCreatURL, active: false }, newTabCallback)
@@ -60,28 +60,40 @@ function playMusic(bookmark) {
       tabFlg = !tabFlg
     }
     //console.log("tab updated!" + String(newTabId))
-    chrome.tabs.update(newTabId, { url: genRandBookmarkURL(targetBookmark) }, newTabCallback)
+    chrome.tabs.update(newTabId, { url: genRandBookmarkURL() }, newTabCallback)
   }
 }
 
-function genRandBookmarkURL(bookmark) {
+function genRandBookmarkURL(/*bookmark*/) {
   let targetBookmark = []
+  //index for directory treenode
+  let randDirIndex = null
+  //random dir node
+  let randNode = null
+  //random child index in random directory node
+  let randIndex = null
+
   chrome.storage.local.get('targetBookmark', function(data){
     if(data) {
       targetBookmark = [...data.targetBookmark]
     }
-    else {
-      targetBookmark = [DEFAULT_FOLDER]
-    }
   })
-  let randDirIndex = Math.floor(Math.random() * (targetBookmark.length))
-  let randNode = chrome.bookmarks.get(targetBookmark[randDirIndex])
-  let randIndex = Math.floor(Math.random() * (randNode.length))
+  if(targetBookmark.length == 0) {
+    randNode = defaultTargetBookmark
+    console.log("randNode", randNode)
+    console.log("mumi", defaultTargetBookmark)
+  }
+  else {
+    randDirIndex = Math.floor(Math.random() * (targetBookmark.length))
+    randNode = chrome.bookmarks.get(targetBookmark[randDirIndex])
+  }
+  randIndex = Math.floor(Math.random() * (randNode.length))
   let maxSearch = 20
   while(!randNode[randIndex].hasOwnProperty('url') && maxSearch > 0) {
     randIndex = Math.floor(Math.random() * (randNode.length))
     maxSearch -= 1
   }
+  
   ytContinuousFlg = prevURL.includes("youtube.com") && randNode[randIndex]['url'].includes("youtube.com")
   prevURL = randNode[randIndex]['url']
 
@@ -99,14 +111,20 @@ function searchFolder(bookmarks, target) {
     let bookmark = bookmarks[i]
     if (bookmark.children) {
       if (bookmark.title == target) {
-        targetBookmark = bookmark.children
+        console.log("found search target")
+        let searchTargetBookmark = bookmark.children
+        return searchTargetBookmark
       }
       else {
-        searchFolder(bookmark.children, target)
+        let result = searchFolder(bookmark.children, target)
+        if(result) {
+          console.log("result", result)
+          return result
+        }
       }
     }
   }
-  return targetBookmark
+  return null
 }
 
 //current only work for yt video
@@ -115,7 +133,7 @@ function updateUntilVideoAvail(tabId) {
     chrome.tabs.executeScript(tabId, { code: `(${ytGetVideo})()` }, function (result) {
       if (!result[0]) {
         if(!clickFlg){
-          chrome.tabs.update(tabId, { url: genRandBookmarkURL(targetBookmark) })
+          chrome.tabs.update(tabId, { url: genRandBookmarkURL() })
         }
       }
       else {
@@ -130,12 +148,14 @@ chrome.browserAction.onClicked.addListener(function (tab) {
   clickFlg = true
   if(!initFlg) {
     chrome.bookmarks.getTree(function (TreeNodes) {
-      playMusic(searchFolder(TreeNodes, DEFAULT_FOLDER))
+      defaultTargetBookmark = searchFolder(TreeNodes, DEFAULT_FOLDER)
+      console.log("defaultTargetBookmark",defaultTargetBookmark)
+      playMusic()
     })
     initFlg = false
   }
   else {
-    playMusic(targetBookmark)
+    playMusic()
   } 
 })
 
@@ -184,7 +204,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
   if(message.from == "youtube_controller") {
     if(message.message == "yt_video_end" && YT_CONTINUOUS_MODE) {
       clickFlg = true
-      playMusic(targetBookmark)
+      playMusic()
     }
   }
 })
