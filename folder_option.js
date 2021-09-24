@@ -1,6 +1,7 @@
 let root_folder = document.getElementById("root_folder_list");
 let save_button = document.getElementById("save_option_btn")
 let directoryUnfoldState = new Map();
+let checkBoxRecord = new Set(JSON.parse(localStorage.getItem("checkBoxRecord")))
 let configSetting = {
     targetBookmark: new Set()
 }
@@ -14,6 +15,7 @@ chrome.bookmarks.getTree(function (TreeNodes) {
 save_button.addEventListener("click", function(event) {
     //set can't properly save => need to convert to array
     localStorage.setItem("targetBookmark", JSON.stringify(Array.from(configSetting.targetBookmark)))
+    localStorage.setItem("checkBoxRecord", JSON.stringify(Array.from(checkBoxRecord)))
 })
 
 
@@ -27,6 +29,10 @@ function createDynamicList(node, htmlParent) {
                 //add input element to set the target directory
                 let checkBtn = document.createElement('input');
                 checkBtn.setAttribute('type', 'checkbox');
+                let checkboxRecordKey = node.children[i].dateAdded.toString() + node.children[i].title
+                if(checkBoxRecord.has(checkboxRecordKey)) {
+                    checkBtn.setAttribute('checked', true)
+                }
 
                 child.appendChild(checkBtn)
                 checkBtn.addEventListener("change", function (e) {
@@ -79,12 +85,16 @@ function foldClickHandler(node, curElement) {
     }
 }
 
+//store the node in config and store checkboxstatus using hash key dateAdded + title
 function checkEventHandler(node, check=true) {
     if(check) {
         configSetting.targetBookmark.add(node)
+        console.log(node)
+        checkBoxRecord.add(node['dateAdded'].toString() + node['title'])
     }
     else {
         configSetting.targetBookmark.delete(node)
+        checkBoxRecord.delete(node['dateAdded'].toString() + node['title'])
     }
     console.log(configSetting.targetBookmark)
 }
