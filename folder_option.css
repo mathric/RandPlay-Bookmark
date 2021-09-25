@@ -1,0 +1,62 @@
+html, body{
+    margin-left: 30px;
+    margin-right: 50px;
+    font-size: 18px;
+	background-color: rgb(220, 227, 238);
+}
+
+footer {
+    margin-top: 30px;
+    width: 100%;
+    height: 2.5rem;
+}
+
+button.btn_folder {
+    margin-left: 10px;
+    height: 18px;
+    width: 18px;
+    background-size: 100%;
+    background-image: url('./assets/icons8-play-50.png');
+}
+
+#folder_container {
+    overflow: auto;
+    height: 70vh;
+    max-height: 70vh;
+    border: solid #5B6DCD 5px;
+}
+
+img {
+    height: 18px;
+    width: 18px;
+    margin-right: 10px;
+}
+
+ul, li {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/*hover*/
+ul > li.folder:hover{
+    color: aqua;
+}
+li:hover ul {
+    color: black;
+}
+ul > li.bookmark_link:hover{
+    color: forestgreen;
+}
+
+/*folder icon*/
+li.folder {
+    list-style-image:url('./assets/icons8-folder-18.png');  
+}
+
+/*remove bulletin*/
+li.bookmark_link {
+    list-style: none;
+    list-style-image:none;
+}
+
+

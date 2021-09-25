@@ -32,8 +32,9 @@ function createDynamicList(node, htmlParent) {
     if (node.hasOwnProperty("children")) {
         for (let i = 0; i < node.children.length; i++) {
             let child = document.createElement("li");
-
             if (node.children[i].hasOwnProperty("children")) {
+                //add folder class to set the icon
+                child.classList.add('folder')
                 //add input element to set the target directory
                 let checkBtn = document.createElement('input');
                 checkBtn.setAttribute('type', 'checkbox');
@@ -52,6 +53,7 @@ function createDynamicList(node, htmlParent) {
 
                 //add button to expand the directory
                 let unfoldBtn = document.createElement('button');
+                unfoldBtn.classList.add('btn_folder')
                 child.appendChild(unfoldBtn)
 
                 let grandChild = document.createElement("ul");
@@ -64,14 +66,15 @@ function createDynamicList(node, htmlParent) {
                 });
             }
             else {
+                child.classList.add('bookmark_link')
                 child.addEventListener("click", function (e) {
                     e.stopPropagation();             
                 })
                 //add icon
                 let childIcon = document.createElement('img')
-                console.log(node.children[i].url)
+                //console.log(node.children[i].url)
                 childIcon.src = "chrome://favicon/https://" + getIconSrc(node.children[i].url)
-                console.log(childIcon.src)
+                //console.log(childIcon.src)
                 child.appendChild(childIcon)
 
                 let titleContent = document.createTextNode(node.children[i].title)
