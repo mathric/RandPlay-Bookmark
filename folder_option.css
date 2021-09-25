@@ -11,12 +11,20 @@ footer {
     height: 2.5rem;
 }
 
-button.btn_folder {
+li.fold > button {
     margin-left: 10px;
     height: 18px;
     width: 18px;
     background-size: 100%;
-    background-image: url('./assets/icons8-play-50.png');
+    background-image: url('./assets/icons8-play-18.png');
+}
+
+li.unfold > button {
+    margin-left: 10px;
+    height: 18px;
+    width: 18px;
+    background-size: 100%;
+    background-image: url('./assets/icons8-play-18-unfold.png');
 }
 
 #folder_container {
@@ -59,4 +67,8 @@ li.bookmark_link {
     list-style-image:none;
 }
 
+input[type='checkbox'] {
+    height: 18px;
+    width: 18px;
+}
 

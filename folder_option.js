@@ -22,7 +22,7 @@ save_button.addEventListener("click", function(event) {
 function getIconSrc(url) {
     let tmp = document.createElement ('a')
     tmp.href = url
-    console.log("tmp.hostname",tmp.hostname)
+    //console.log("tmp.hostname",tmp.hostname)
     return tmp.hostname
 }
 
@@ -35,6 +35,7 @@ function createDynamicList(node, htmlParent) {
             if (node.children[i].hasOwnProperty("children")) {
                 //add folder class to set the icon
                 child.classList.add('folder')
+                child.classList.add('fold')
                 //add input element to set the target directory
                 let checkBtn = document.createElement('input');
                 checkBtn.setAttribute('type', 'checkbox');
@@ -54,7 +55,6 @@ function createDynamicList(node, htmlParent) {
 
                 //add button to expand the directory
                 let unfoldBtn = document.createElement('button');
-                unfoldBtn.classList.add('btn_folder')
                 child.appendChild(unfoldBtn)
 
                 let grandChild = document.createElement("ul");
@@ -63,12 +63,12 @@ function createDynamicList(node, htmlParent) {
                 //register click listener to generate list in directory
                 unfoldBtn.addEventListener("click", function (e) {
                     e.stopPropagation();
-                    foldClickHandler(node.children[i], grandChild)                 
+                    foldClickHandler(child, node.children[i], grandChild)                 
                 });
                 //register the fold click listener to the text
                 titleContent.addEventListener("click", function (e) {
                     e.stopPropagation();
-                    foldClickHandler(node.children[i], grandChild)                 
+                    foldClickHandler(child, node.children[i], grandChild)                 
                 });
             }
             else {
@@ -92,16 +92,21 @@ function createDynamicList(node, htmlParent) {
     }
 }
 
-function foldClickHandler(node, curElement) {
+//curElement is the ul element to creat list in it
+function foldClickHandler(clickComponent, node, curElement) {
     let cur_unfold_state = directoryUnfoldState[node.id];
 
     //unfold it 
     if (cur_unfold_state === undefined || !cur_unfold_state) {
+        clickComponent.classList.remove('fold')
+        clickComponent.classList.add('unfold')
         createDynamicList(node, curElement);
         directoryUnfoldState[node.id] = true;
     }
     else{
         //fold it(remove all grandchild)
+        clickComponent.classList.remove('unfold')
+        clickComponent.classList.add('fold')
         while (curElement.firstChild) {
             curElement.removeChild(curElement.lastChild);
         }
@@ -113,12 +118,12 @@ function foldClickHandler(node, curElement) {
 function checkEventHandler(node, check=true) {
     if(check) {
         configSetting.targetBookmark.add(node)
-        console.log(node)
+        //console.log(node)
         checkBoxRecord.add(node['dateAdded'].toString() + node['title'])
     }
     else {
         configSetting.targetBookmark.delete(node)
         checkBoxRecord.delete(node['dateAdded'].toString() + node['title'])
     }
-    console.log(configSetting.targetBookmark)
+    //console.log(configSetting.targetBookmark)
 }
