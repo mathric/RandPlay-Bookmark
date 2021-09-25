@@ -16,6 +16,13 @@ save_button.addEventListener("click", function(event) {
     //set can't properly save => need to convert to array
     localStorage.setItem("targetBookmark", JSON.stringify(Array.from(configSetting.targetBookmark)))
     localStorage.setItem("checkBoxRecord", JSON.stringify(Array.from(checkBoxRecord)))
+    
+    let saveSucessMesg = document.getElementById('save_option_mesg')
+    saveSucessMesg.classList.remove('faded')
+    saveSucessMesg.classList.add('unfaded')
+    setTimeout(() => {
+        saveSucessMesg.classList.add('faded')
+    }, 800);
 })
 
 

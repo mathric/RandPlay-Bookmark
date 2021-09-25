@@ -1,16 +1,24 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="utf-8"/>
+    <link href="./folder_option.css" rel="stylesheet">
     <title>Extension Options</title>
   </head>
 
   <body>
     <h1>RandPlay Bookmark Options</h1>
-    <div>Folder Setting</div>
-    <div id="root_folder">
+    <h2>Folder Setting</h2>
+    <div id="folder_container">
         <ul id="root_folder_list"></ul>
     </div>
-    <input type="button" id="save_option_btn" value="Save Options">
+    
+    <button id="save_option_btn" style='margin-top: 10px;'>Save Options</button>
+    <span id="save_option_mesg" class="faded">Save Success!</span>
 
     <script type="module" src="./folder_option.js"></script>
   </body>
+  <footer>
+    <a target="_blank" href="https://icons8.com/icon/9978/play">Play</a>, <a target="_blank" href="https://icons8.com/icon/12160/folder">Folder</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+  </footer>
 </html>

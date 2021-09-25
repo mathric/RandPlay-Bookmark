@@ -2,7 +2,7 @@ html, body{
     margin-left: 30px;
     margin-right: 50px;
     font-size: 18px;
-	background-color: rgb(220, 227, 238);
+	background-color: rgb(211, 217, 228);
 }
 
 footer {
@@ -31,7 +31,9 @@ li.unfold > button {
     overflow: auto;
     height: 70vh;
     max-height: 70vh;
-    border: solid #5B6DCD 5px;
+    border: solid rgb(202, 207, 218) 2px;
+    border-radius:10px;
+    background-color: rgb(220, 227, 238);
 }
 
 img {
@@ -46,14 +48,8 @@ ul, li {
 }
 
 /*hover*/
-ul > li.folder:hover{
-    color: aqua;
-}
-li:hover ul {
-    color: black;
-}
-ul > li.bookmark_link:hover{
-    color: forestgreen;
+ul > li.folder > span:hover{
+    background-color: rgb(233, 230, 227);
 }
 
 /*folder icon*/
@@ -70,5 +66,21 @@ li.bookmark_link {
 input[type='checkbox'] {
     height: 18px;
     width: 18px;
+}
+
+#save_option_btn {
+    font-size: 18px;
+}
+
+#save_option_mesg.unfaded {
+    /*display: none;*/
+    -webkit-transition: opacity 1s;
+    transition: opacity 1s;
+    font-size: 18px;
+    opacity: 1;
+}
+
+#save_option_mesg.faded {
+    opacity: 0;
 }
 
