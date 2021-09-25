@@ -22,9 +22,10 @@
  ],
   "browser_action": {},
   "manifest_version": 2,
-  "options_page": "folder_option.html"
-
-  /*"icons": { "16": "icon16.png",
-    "48": "icon48.png",
-   "128": "icon128.png" }*/
+  "options_page": "folder_option.html",
+  "icons": { 
+    "16": "./assets/favicon-16.png",
+    "48": "./assets/favicon-48.png",
+   "128": "./assets/favicon-128.png" 
+  }
 }
