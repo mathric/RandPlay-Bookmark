@@ -48,7 +48,8 @@ function createDynamicList(node, htmlParent) {
                     checkEventHandler(node.children[i], this.checked)              
                 });
 
-                let titleContent = document.createTextNode(node.children[i].title);
+                let titleContent = document.createElement('span')
+                titleContent.textContent = node.children[i].title
                 child.appendChild(titleContent);
 
                 //add button to expand the directory
@@ -61,6 +62,11 @@ function createDynamicList(node, htmlParent) {
 
                 //register click listener to generate list in directory
                 unfoldBtn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    foldClickHandler(node.children[i], grandChild)                 
+                });
+                //register the fold click listener to the text
+                titleContent.addEventListener("click", function (e) {
                     e.stopPropagation();
                     foldClickHandler(node.children[i], grandChild)                 
                 });
